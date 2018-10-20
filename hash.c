@@ -1,4 +1,4 @@
-typedef enum ESTADO{ OCUPADO, VACIO, BORRADO } estado_t;
+typedef enum estado { OCUPADO, VACIO, BORRADO } estado_t;
 
 typedef struct hash {
 	size_t cantidad;
