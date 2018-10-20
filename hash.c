@@ -11,12 +11,6 @@ typedef struct elemento {
 	char * clave;
 	ESTADO_T estado;
 }elemento_t;
-struct hash_iter;
-
-typedef struct hash hash_t;
-typedef struct hash_iter hash_iter_t;
-
-typedef void (*hash_destruir_dato_t)(void *);
 
 hash_t *hash_crear(hash_destruir_dato_t destruir_dato);
 
