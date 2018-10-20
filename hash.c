@@ -1,4 +1,5 @@
-typedef enum ESTADO{ OCUPADO, VACIO, BORRADO } ESTADO_T;
+typedef enum ESTADO{ OCUPADO, VACIO, BORRADO } estado_t;
+
 typedef struct hash {
 	size_t cantidad;
 	size_t capacidad;
@@ -9,31 +10,67 @@ typedef struct hash {
 typedef struct elemento {
 	void * dato;
 	char * clave;
-	ESTADO_T estado;
+	estado_t estado;
 }elemento_t;
 
-hash_t *hash_crear(hash_destruir_dato_t destruir_dato);
+unsigned long hash(unsigned char *str) {
+	unsigned long hash = 5381;
+	int c;
+	while (c = *str++)
+		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
-bool hash_guardar(hash_t *hash, const char *clave, void *dato);
+	return hash;
+}
 
-void *hash_borrar(hash_t *hash, const char *clave);
+hash_t *hash_crear(hash_destruir_dato_t destruir_dato) {
 
-void *hash_obtener(const hash_t *hash, const char *clave);
+}
 
-bool hash_pertenece(const hash_t *hash, const char *clave);
+bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
 
-size_t hash_cantidad(const hash_t *hash);
+}
 
-void hash_destruir(hash_t *hash);
+void *hash_borrar(hash_t *hash, const char *clave) {
 
+}
 
-hash_iter_t *hash_iter_crear(const hash_t *hash);
+void *hash_obtener(const hash_t *hash, const char *clave) {
 
-bool hash_iter_avanzar(hash_iter_t *iter);
+}
 
-const char *hash_iter_ver_actual(const hash_iter_t *iter);
+bool hash_pertenece(const hash_t *hash, const char *clave) {
+	if(!hash) return false;
+	unsigned long posicion = hash(clave) % hash->capacidad;
 
-bool hash_iter_al_final(const hash_iter_t *iter);
+	for(int i = 0; i < hash->capacidad; i++) {
+		if(hash->datos[posicion + i]->estado == VACIO)
+			return false;
+		if(strcmp(hash->datos[posicion + i]->clave, clave) == 0)
+			return true;
+	}
+}
 
-void hash_iter_destruir(hash_iter_t* iter);
+size_t hash_cantidad(const hash_t *hash) {
 
+}
+
+void hash_destruir(hash_t *hash) {
+
+}
+
+hash_iter_t *hash_iter_crear(const hash_t *hash) {
+
+}
+
+bool hash_iter_avanzar(hash_iter_t *iter) {
+
+}
+const char *hash_iter_ver_actual(const hash_iter_t *iter) {
+
+}
+bool hash_iter_al_final(const hash_iter_t *iter) {
+
+}
+void hash_iter_destruir(hash_iter_t* iter) {
+
+}
