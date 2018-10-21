@@ -151,6 +151,7 @@ static void prueba_hash_borrar()
     print_test("Prueba hash insertar clave2", hash_guardar(hash, clave2, valor2));
     print_test("Prueba hash insertar clave3", hash_guardar(hash, clave3, valor3));
 
+
     /* Al borrar cada elemento comprueba que ya no está pero los otros sí. */
     print_test("Prueba hash pertenece clave3, es verdadero", hash_pertenece(hash, clave3));
     print_test("Prueba hash borrar clave3, es valor3", hash_borrar(hash, clave3) == valor3);
