@@ -97,7 +97,7 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
 	
 	for(size_t i = 0; i < hash->capacidad; i++) {
 		size_t nueva_posicion = (i + posicion) % hash->capacidad;
-		if(hash->tabla[nueva_posicion].estado == VACIO){
+		if(hash->tabla[nueva_posicion].estado == VACIO) {
 			elemento_t* elemento = malloc(sizeof(elemento_t));
 			if(!elemento) return false;
 			
