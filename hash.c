@@ -27,7 +27,6 @@ unsigned long hash(unsigned char *str) {
 	int c;
 	while (c = *str++)
 		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-
 	return hash;
 }
 
@@ -38,11 +37,9 @@ size_t hash_posicion(const hash_t *hash, const char *clave) {
 hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 	
 	hash_t* hash = malloc(sizeof(hash_t));
-	
 	if(!hash) return NULL;
 	
 	hash->funcion_destruir = destruir_dato;
-	
 	hash->datos = calloc(TAM_INICIAL,sizeof(elemento_t));
 	
 	if(!hash->datos) {
@@ -57,18 +54,15 @@ hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 }
 
 bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
-	
 	elemento_t* elemento = hash_obtener_elemento(hash,clave);
 	
 	size_t posicion = hash_posicion(hash,clave);
-
 	if(elemento){
 		hash->datos[posicion].clave = strdup(clave);
 		hash->funcion_destruir(dato);
 		hash->datos[posicion].dato = dato;
 		return true
 	}
-	
 	
 	for(size_t i = 0; i < hash->capacidad; i++) {
 		size_t nueva_posicion = (i + posicion) % hash->capacidad;
@@ -82,7 +76,6 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
 
 			hash->datos[nueva_posicion] = elemento;
 			hash->cantidad++;
-
 		}
 	}
 	return true;
@@ -92,7 +85,6 @@ elemento_t* hash_obtener_elemento(const hash_t *hash, const char *clave) {
 	size_t posicion = hash_posicion(hash, clave);
 
 	for(size_t i = 0; i < hash->capacidad; i++) {
-		
 		size_t nueva_posicion = (posicion + i) % hash->capacidad;
 
 		if(!hash->datos[nueva_posicion])
