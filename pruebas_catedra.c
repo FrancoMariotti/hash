@@ -300,6 +300,7 @@ static void prueba_hash_iterar()
     /* Primer valor */
     clave = hash_iter_ver_actual(iter);
     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
+
     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
     print_test("Prueba hash iterador ver actual, no es el mismo puntero", clave != claves[indice]);
     print_test("Prueba hash iterador avanzar es true", hash_iter_avanzar(iter));
@@ -410,9 +411,9 @@ void pruebas_hash_catedra()
     prueba_hash_borrar();
     prueba_hash_clave_vacia();
     prueba_hash_valor_null();
-    prueba_hash_volumen(5000, true);
+    prueba_hash_volumen(5, true);
     prueba_hash_iterar();
-    prueba_hash_iterar_volumen(5000);
+    prueba_hash_iterar_volumen(5);
 }
 
 void pruebas_volumen_catedra(size_t largo)
