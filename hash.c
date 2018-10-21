@@ -60,31 +60,31 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
 	
 	elemento_t* elemento = hash_obtener_elemento(hash,clave);
 	
+	size_t posicion = hash_posicion(hash,clave);
+
 	if(elemento){
 		hash->datos[posicion].clave = strdup(clave);
 		hash->funcion_destruir(dato);
 		hash->datos[posicion].dato = dato;
-	}
-	else{	
-		size_t posicion = hash_posicion(hash,clave);
-		
-		for(size_t i = posicion; i < hash->capacidad; i++) {
-			
-			if(hash->datos[posicion] == NULL){
-				elemento_t* elemento = malloc(sizeof(elemento_t));
-			
-				if(!elemento) return NULL;
-				
-				elemento->clave = clave;
-				elemento->dato = dato;
-				elemento->estado = OCUPADO;
-
-				hash->datos[posicion]=elemento;
-			}
-		}
-		hash->cantidad++;
+		return true
 	}
 	
+	
+	for(size_t i = 0; i < hash->capacidad; i++) {
+		size_t nueva_posicion = (i + posicion) % hash->capacidad;
+		if(!hash->datos[nueva_posicion]){
+			elemento_t* elemento = malloc(sizeof(elemento_t));
+			if(!elemento) return NULL;
+			
+			elemento->clave = clave;
+			elemento->dato = dato;
+			elemento->estado = OCUPADO;
+
+			hash->datos[nueva_posicion] = elemento;
+			hash->cantidad++;
+
+		}
+	}
 	return true;
 }
 
