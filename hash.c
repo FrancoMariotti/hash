@@ -153,21 +153,26 @@ hash_iter_t *hash_iter_crear(const hash_t *hash) {
 	hash_iter_t * iter = malloc(sizeof(hash_iter_t));
 	if(!iter) return NULL;
 	iter->hash = hash;
-	iter->posicion = 0;
+	iter->posicion = -1;
+	hash_iter_avanzar(iter);
 	return iter;
 }
 
 bool hash_iter_avanzar(hash_iter_t *iter) {
 	if(hash_iter_al_final(iter)) return false;
-	iter->posicion++;
+	for(size_t i = iter->posicion + 1; i < iter->hash->cantidad; i++) {
+		if(iter->hash->tabla[i].estado == OCUPADO) {
+			iter->posicion = i;
+			break;
+		}
+	}
 	return true;
 }
 const char *hash_iter_ver_actual(const hash_iter_t *iter) {
-	if(iter->posicion >= iter->hash->cantidad) return NULL;
 	return iter->hash->tabla[iter->posicion].clave;
 }
 bool hash_iter_al_final(const hash_iter_t *iter) {
-	return iter->posicion >= iter->hash->cantidad;
+	return iter->posicion == iter->hash->cantidad - 1;
 }
 void hash_iter_destruir(hash_iter_t* iter) {
 	free(iter);	

@@ -299,6 +299,7 @@ static void prueba_hash_iterar()
 
     /* Primer valor */
     clave = hash_iter_ver_actual(iter);
+    printf("%s \n", clave);
     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
 
     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
