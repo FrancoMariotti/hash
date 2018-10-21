@@ -29,22 +29,6 @@ size_t hash_posicion(const hash_t *hash, const char *clave) {
 	return (size_t) hash(clave) % hash->capacidad;
 }
 
-
-void *hash_borrar(hash_t *hash, const char *clave) {
-	elemento_t elemento = hash_obtener_elemento(hash, clave);
-	if(!elemento) return NULL;
-	elemento.estado = BORRADO;
-	elemento.clave = NULL;
-	if(hash->funcion_destruir)
-		funcion_destruir(elemento.dato);
-	hash->cantidad--;
-
-	if((float) hash->cantidad / hash->capacidad <= FACTOR_CARGA)
-		hash_redimensionar(hash, capacidad->capacidad * FACTOR_CARGA_BORRADO);
-
-	free(elemento->clave);
-}
-
 hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 	
 	hash_t* hash = malloc(sizeof(hash_t));
