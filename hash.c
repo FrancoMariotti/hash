@@ -29,67 +29,53 @@ typedef struct hash_iter {
 	size_t posicion;
 }hash_iter_t;
 
-unsigned long hashing(const char *str) {
-	unsigned long hash = 5381;
-	int c;
-	while ((c = *str++))
-		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-	return hash;
-}
+/*
+ * Dado una cadena de caracteres,
+ * devuelve un numero de hash
+ * generado a partir de la cadena
+ * con el algoritmo djb2.
+ */
+unsigned long hashing(const char *str);
 
-size_t hash_posicion(size_t capacidad, const char *clave) {
-	return (size_t) hashing(clave) % capacidad;
-}
+/*
+ * Dado una clave y la capacidad
+ * devuelve una posición entre
+ * 0 y capacidad.
+ */
+size_t hash_posicion(size_t capacidad, const char *clave);
 
-elemento_t* hash_obtener_elemento(const hash_t *hash, const char *clave) {
-	size_t posicion = hash_posicion(hash->capacidad, clave);
+/*
+ * Dado un hash y una clave, la
+ * función devuelve el elemento 
+ * que corresponda a esa clave
+ * o NULL en caso de que no exista
+ * dicha clave.
+ * Pre: hash fue creado.
+ */
+elemento_t* hash_obtener_elemento(const hash_t *hash, const char *clave);
 
-	for(size_t i = 0; i < hash->capacidad; i++) {
-		size_t nueva_posicion = (posicion + i) % hash->capacidad;
+/*
+ * Dada una tabla de elementos y su 
+ * capacidad, la función inicializa 
+ * sus valores.
+ * Pre: la memoria para la tabla 
+ * fue previamente reservada.
+ * Post: todos los valores de la
+ * tabla van a ser NULL/VACIO según
+ * corresponda.
+ */
+void tabla_valores_iniciales(elemento_t* tabla, size_t capacidad);
 
-		if(hash->tabla[nueva_posicion].estado == BORRADO)
-			continue;
-		if(hash->tabla[nueva_posicion].estado == VACIO)
-			return NULL;
-		if(strcmp(hash->tabla[nueva_posicion].clave, clave) == 0)
-			return &hash->tabla[nueva_posicion];
-	}
-	return NULL;
-}
-
-void tabla_valores_iniciales(elemento_t* tabla, size_t capacidad) {
-	for(size_t i = 0; i < capacidad; i++) {
-		tabla[i].clave = NULL;
-		tabla[i].dato = NULL;
-		tabla[i].estado = VACIO;
-	}
-}
-
-bool hash_redimensionar(hash_t *hash, size_t nueva_capacidad){
-	elemento_t* nueva_tabla = malloc(sizeof(elemento_t) * nueva_capacidad);
-	if(!nueva_tabla) return false;
-	elemento_t* vieja_tabla = hash->tabla;
-	
-	size_t capacidad_vieja = hash->cantidad;
-	hash->cantidad = hash->cantidad - hash->borrados;
-	hash->capacidad = nueva_capacidad;
-	hash->tabla = nueva_tabla;
-	hash->borrados = 0;
-
-	tabla_valores_iniciales(hash->tabla, nueva_capacidad);
-	for(size_t i = 0; i < capacidad_vieja; i++) {
-		if(vieja_tabla[i].estado != OCUPADO)
-			continue;
-		hash_guardar(hash, vieja_tabla[i].clave, vieja_tabla[i].dato);
-		if(hash->funcion_destruir)
-			hash->funcion_destruir(vieja_tabla[i].dato);
-		free(vieja_tabla[i].clave); 
-	}
-	
-	free(vieja_tabla);
-	
-	return true;
-}
+/*
+ * Dado un hash y una nueva_capacidad
+ * se redimensiona la tabla de hash
+ * con la nueva dimensión y se reubican 
+ * todos sus elementos.
+ * Pre: hash fue creado.
+ * Post: la tabla de hash pasará 
+ * a tener la nueva capacidad. 
+ */
+bool hash_redimensionar(hash_t *hash, size_t nueva_capacidad);
 
 hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 	
@@ -220,4 +206,66 @@ bool hash_iter_al_final(const hash_iter_t *iter) {
 }
 void hash_iter_destruir(hash_iter_t* iter) {
 	free(iter);	
+}
+
+unsigned long hashing(const char *str) {
+	unsigned long hash = 5381;
+	int c;
+	while ((c = *str++))
+		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+	return hash;
+}
+
+size_t hash_posicion(size_t capacidad, const char *clave) {
+	return (size_t) hashing(clave) % capacidad;
+}
+
+elemento_t* hash_obtener_elemento(const hash_t *hash, const char *clave) {
+	size_t posicion = hash_posicion(hash->capacidad, clave);
+
+	for(size_t i = 0; i < hash->capacidad; i++) {
+		size_t nueva_posicion = (posicion + i) % hash->capacidad;
+
+		if(hash->tabla[nueva_posicion].estado == BORRADO)
+			continue;
+		if(hash->tabla[nueva_posicion].estado == VACIO)
+			return NULL;
+		if(strcmp(hash->tabla[nueva_posicion].clave, clave) == 0)
+			return &hash->tabla[nueva_posicion];
+	}
+	return NULL;
+}
+
+void tabla_valores_iniciales(elemento_t* tabla, size_t capacidad) {
+	for(size_t i = 0; i < capacidad; i++) {
+		tabla[i].clave = NULL;
+		tabla[i].dato = NULL;
+		tabla[i].estado = VACIO;
+	}
+}
+
+bool hash_redimensionar(hash_t *hash, size_t nueva_capacidad) {
+	elemento_t* nueva_tabla = malloc(sizeof(elemento_t) * nueva_capacidad);
+	if(!nueva_tabla) return false;
+	elemento_t* vieja_tabla = hash->tabla;
+	
+	size_t capacidad_vieja = hash->cantidad;
+	hash->cantidad = hash->cantidad - hash->borrados;
+	hash->capacidad = nueva_capacidad;
+	hash->tabla = nueva_tabla;
+	hash->borrados = 0;
+
+	tabla_valores_iniciales(hash->tabla, nueva_capacidad);
+	for(size_t i = 0; i < capacidad_vieja; i++) {
+		if(vieja_tabla[i].estado != OCUPADO)
+			continue;
+		hash_guardar(hash, vieja_tabla[i].clave, vieja_tabla[i].dato);
+		if(hash->funcion_destruir)
+			hash->funcion_destruir(vieja_tabla[i].dato);
+		free(vieja_tabla[i].clave); 
+	}
+	
+	free(vieja_tabla);
+	
+	return true;
 }
