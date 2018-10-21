@@ -17,6 +17,11 @@ typedef struct elemento {
 	estado_t estado;
 }elemento_t;
 
+typedef struct hash_iter {
+	hash_t * hash;
+	elemento_t * actual;
+}hash_iter_t;
+
 unsigned long hash(unsigned char *str) {
 	unsigned long hash = 5381;
 	int c;
@@ -106,11 +111,6 @@ void *hash_borrar(hash_t *hash, const char *clave) {
 	void * dato = elemento->dato;
 	if(hash->funcion_destruir)
 		funcion_destruir(elemento->dato);
-	hash->cantidad--;
-
-	if((float) hash->cantidad / hash->capacidad <= FACTOR_CARGA)
-		hash_redimensionar(hash, capacidad->capacidad * FACTOR_CARGA_BORRADO);
-
 	free(elemento->clave);
 	return dato;
 }
@@ -142,18 +142,25 @@ void hash_destruir(hash_t *hash) {
 }
 
 hash_iter_t *hash_iter_crear(const hash_t *hash) {
+	hash_iter_t * iter = malloc(sizeof(hash_iter_t));
+	if(!iter) return NULL;
+	iter->hash = hash;
+	iter->actual = hash->datos;
 
+	return iter;
 }
 
 bool hash_iter_avanzar(hash_iter_t *iter) {
-
+	if(!iter->actual) return false;
+	iter->actual++;
 }
 const char *hash_iter_ver_actual(const hash_iter_t *iter) {
-
+	if(!iter->actual) return NULL;
+	return iter->actual->clave;
 }
 bool hash_iter_al_final(const hash_iter_t *iter) {
-
+	return !iter->actual;
 }
 void hash_iter_destruir(hash_iter_t* iter) {
-
+	free(iter);	
 }
