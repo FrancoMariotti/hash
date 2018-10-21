@@ -4,7 +4,6 @@
 #include "hash.h"
 #define TAM_INICIAL 101
 #define FACTOR_CARGA 0.5
-#define FACTOR_CARGA_BORRADO FACTOR_CARGA * 0.5
 
 typedef enum estado { OCUPADO, VACIO, BORRADO } estado_t;
 
@@ -113,6 +112,11 @@ hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 }
 
 bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
+	
+	if((hash->cantidad / hash->capacidad)  >= FACTOR_CARGA){
+		if(!hash_redimensionar(hash, hash->capacidad * 2 ))return false;
+	}
+	
 	elemento_t * elemento = hash_obtener_elemento(hash, clave);
 	size_t posicion = hash_posicion(hash, clave);
 
