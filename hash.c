@@ -68,8 +68,14 @@ elemento_t * hash_obtener_elemento(const hash_t *hash, const char *clave) {
 }
 
 void *hash_borrar(hash_t *hash, const char *clave) {
-	if(!hash || !hash_pertenece(hash, clave)) return NULL;
-	size_t posicion = hash_posicion(hash, clave);
+	if(!hash) return NULL;
+	elemento_t * elemento = hash_obtener_elemento(hash, clave);
+	if(!elemento) return NULL;
+	elemento->estado = BORRADO;
+	elemento->clave = NULL;
+	if(hash->funcion_destruir)
+		funcion_destruir(elemento->dato);
+	hash->cantidad--;
 }
 
 void *hash_obtener(const hash_t *hash, const char *clave) {
