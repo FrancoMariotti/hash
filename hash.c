@@ -5,7 +5,6 @@
 #include <stdio.h>
 #define TAM_INICIAL 101
 #define FACTOR_CARGA 0.5
-#define FACTOR_CARGA_BORRADO FACTOR_CARGA * 0.5
 
 typedef enum estado { OCUPADO, VACIO, BORRADO } estado_t;
 
@@ -58,11 +57,11 @@ elemento_t* hash_obtener_elemento(const hash_t *hash, const char *clave) {
 	return NULL;
 }
 
-void hash_valores_iniciales(hash_t * hash) {
-	for(size_t i = 0; i < hash->capacidad; i++) {
-		hash->tabla[i].clave = NULL;
-		hash->tabla[i].dato = NULL;
-		hash->tabla[i].estado = VACIO;
+void tabla_valores_iniciales(elemento_t* tabla,size_t capacidad) {
+	for(size_t i = 0; i < capacidad; i++) {
+		tabla[i].clave = NULL;
+		tabla[i].dato = NULL;
+		tabla[i].estado = VACIO;
 	}
 }
 
@@ -71,6 +70,8 @@ bool hash_redimensionar(hash_t *hash, size_t nueva_capacidad){
 	elemento_t* nueva_tabla = malloc(sizeof(elemento_t) * nueva_capacidad);
 	
 	if(!nueva_tabla) return false;
+	
+	tabla_valores_iniciales(nueva_tabla,nueva_capacidad);
 	
 	for(size_t i = 0; i < hash->capacidad; i++) {
 		if(vieja_tabla[i].estado != OCUPADO)
@@ -102,18 +103,21 @@ hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 	hash->capacidad = TAM_INICIAL;
 	hash->cantidad = 0;
 	hash->borrados = 0;
-	hash_valores_iniciales(hash);
+	tabla_valores_iniciales(hash->tabla,hash->capacidad);
 	
 	return hash;	
 }
 
 bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
+	
+	if((hash->cantidad / hash->capacidad)  >= FACTOR_CARGA){
+		if(!hash_redimensionar(hash, hash->capacidad * 2 ))return false;
+	}
+	
 	elemento_t * elemento = hash_obtener_elemento(hash, clave);
 	size_t posicion = hash_posicion(hash->capacidad, clave);
 
 	if(elemento){
-		if(hash->funcion_destruir)
-			hash->funcion_destruir(hash->tabla[posicion].dato);
 		hash->tabla[posicion].dato = dato;
 		return true;
 	}
@@ -134,12 +138,19 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
 }
 
 void *hash_borrar(hash_t *hash, const char *clave) {
+	
 	elemento_t * elemento = hash_obtener_elemento(hash, clave);
+	
 	if(!elemento) return NULL;
+	
 	elemento->estado = BORRADO;
+	
 	free(elemento->clave);
+	
 	elemento->clave = NULL;
+	
 	hash->borrados++;
+	
 	return elemento->dato;
 }
 
