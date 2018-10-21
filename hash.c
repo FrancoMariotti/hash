@@ -1,10 +1,5 @@
-#define TAM_INICIAL	100
-<<<<<<< Updated upstream
 #define FACTOR_CARGA 0.5
 #define FACTOR_CARGA_BORRADO FACTOR_CARGA * 0.5
-=======
-
->>>>>>> Stashed changes
 typedef enum estado { OCUPADO, VACIO, BORRADO } estado_t;
 
 typedef struct hash {
@@ -55,8 +50,6 @@ hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 }
 
 bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
-	
-	
 	if(hash_obtener_elemento(hash,clave)){
 		hash->datos[posicion].clave = strdup(clave);
 		hash->datos[posicion].dato = dato;
@@ -86,8 +79,6 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
 }
 
 elemento_t* hash_obtener_elemento(const hash_t *hash, const char *clave) {
-	
-	if(!hash) return NULL;
 	size_t posicion = hash_posicion(hash, clave);
 
 	for(size_t i = 0; i < hash->capacidad; i++) {
@@ -102,27 +93,24 @@ elemento_t* hash_obtener_elemento(const hash_t *hash, const char *clave) {
 }
 
 void *hash_borrar(hash_t *hash, const char *clave) {
-	
-	if(!hash) return NULL;
 	elemento_t * elemento = hash_obtener_elemento(hash, clave);
 
 	if(!elemento) return NULL;
-	elemento.estado = BORRADO;
-	elemento.clave = NULL;
+	elemento->estado = BORRADO;
+	elemento->clave = NULL;
 	if(hash->funcion_destruir)
-		funcion_destruir(elemento.dato);
+		funcion_destruir(elemento->dato);
 	hash->cantidad--;
 
 	if((float) hash->cantidad / hash->capacidad <= FACTOR_CARGA)
 		hash_redimensionar(hash, capacidad->capacidad * FACTOR_CARGA_BORRADO);
 
-	free(elemento.clave);
+	free(elemento->clave);
 
 }
 
 void *hash_obtener(const hash_t *hash, const char *clave) {
 	elemento_t elemento = hash_obtener_elemento(hash, clave);
-
 	if(!elemento) return NULL; 
 	return elemento.dato;
 }
