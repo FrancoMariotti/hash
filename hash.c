@@ -1,6 +1,10 @@
 #define TAM_INICIAL	100
+<<<<<<< Updated upstream
 #define FACTOR_CARGA 0.5
 #define FACTOR_CARGA_BORRADO FACTOR_CARGA * 0.5
+=======
+
+>>>>>>> Stashed changes
 typedef enum estado { OCUPADO, VACIO, BORRADO } estado_t;
 
 typedef struct hash {
@@ -37,7 +41,7 @@ hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 	
 	hash->funcion_destruir = destruir_dato;
 	
-	hash->datos = malloc(sizeof(elemento_t) * TAM_INICIAL);
+	hash->datos = calloc(TAM_INICIAL,sizeof(elemento_t));
 	
 	if(!hash->datos) {
 		free(hash);
@@ -51,10 +55,39 @@ hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 }
 
 bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
+	
+	
+	if(hash_obtener_elemento(hash,clave)){
+		hash->datos[posicion].clave = strdup(clave);
+		hash->datos[posicion].dato = dato;
+	}
+	else{	
+		size_t posicion = hash_posicion(hash,clave);
+		
+		for(size_t i = posicion; i < hash->capacidad; i++) {
+			
+			if(hash->datos[posicion] == NULL){
+				elemento_t* elemento = malloc(sizeof(elemento_t));
+			
+				if(!elemento) return NULL;
+				
+				elemento->clave = clave;
+				elemento->dato = dato;
+				elemento->estado = OCUPADO;
 
+				hash->datos[posicion]=elemento;
+			}`
+		}
+	}
+ 
+	hash->cantidad++;
+	
+	return true;
 }
 
-elemento_t hash_obtener_elemento(const hash_t *hash, const char *clave) {
+elemento_t* hash_obtener_elemento(const hash_t *hash, const char *clave) {
+	
+	if(!hash) return NULL;
 	size_t posicion = hash_posicion(hash, clave);
 
 	for(size_t i = 0; i < hash->capacidad; i++) {
@@ -69,7 +102,10 @@ elemento_t hash_obtener_elemento(const hash_t *hash, const char *clave) {
 }
 
 void *hash_borrar(hash_t *hash, const char *clave) {
-	elemento_t elemento = hash_obtener_elemento(hash, clave);
+	
+	if(!hash) return NULL;
+	elemento_t * elemento = hash_obtener_elemento(hash, clave);
+
 	if(!elemento) return NULL;
 	elemento.estado = BORRADO;
 	elemento.clave = NULL;
@@ -81,6 +117,7 @@ void *hash_borrar(hash_t *hash, const char *clave) {
 		hash_redimensionar(hash, capacidad->capacidad * FACTOR_CARGA_BORRADO);
 
 	free(elemento.clave);
+
 }
 
 void *hash_obtener(const hash_t *hash, const char *clave) {
