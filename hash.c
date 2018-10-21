@@ -65,6 +65,11 @@ void hash_valores_iniciales(hash_t * hash) {
 	}
 }
 
+bool hash_redimensionar(hash_t *hash, size_t nueva_capacidad){
+	
+	
+}
+
 hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 	
 	hash_t* hash = malloc(sizeof(hash_t));
