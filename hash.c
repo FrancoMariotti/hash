@@ -74,10 +74,11 @@ bool hash_redimensionar(hash_t *hash, size_t nueva_capacidad){
 	if(!nueva_tabla)return false;
 	
 	for(size_t i = 0; i < hash->capacidad; i++) {
-		size_t posicion = i  % hash->capacidad;
 		
-		if(vieja_tabla[posicion].estado == OCUPADO)
-			nueva_tabla[posicion] = vieja_tabla[posicion];
+		if(vieja_tabla[i].estado == OCUPADO){
+			size_t nueva_posicion = (size_t) hashing(vieja_tabla[i].clave) % nueva_capacidad;
+			nueva_tabla[nueva_posicion] = vieja_tabla[i];
+		}
 	}
 	
 	hash->tabla=nueva_tabla;
