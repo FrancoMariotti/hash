@@ -69,7 +69,7 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
 				elemento->estado = OCUPADO;
 
 				hash->datos[posicion]=elemento;
-			}`
+			}
 		}
 	}
  
