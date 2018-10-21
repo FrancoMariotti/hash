@@ -1,4 +1,6 @@
 #define TAM_INICIAL	100
+#define FACTOR_CARGA 0.5
+#define FACTOR_CARGA_BORRADO FACTOR_CARGA * 0.5
 typedef enum estado { OCUPADO, VACIO, BORRADO } estado_t;
 
 typedef struct hash {
@@ -27,6 +29,22 @@ size_t hash_posicion(const hash_t *hash, const char *clave) {
 	return (size_t) hash(clave) % hash->capacidad;
 }
 
+
+void *hash_borrar(hash_t *hash, const char *clave) {
+	elemento_t elemento = hash_obtener_elemento(hash, clave);
+	if(!elemento) return NULL;
+	elemento.estado = BORRADO;
+	elemento.clave = NULL;
+	if(hash->funcion_destruir)
+		funcion_destruir(elemento.dato);
+	hash->cantidad--;
+
+	if((float) hash->cantidad / hash->capacidad <= FACTOR_CARGA)
+		hash_redimensionar(hash, capacidad->capacidad * FACTOR_CARGA_BORRADO);
+
+	free(elemento->clave);
+}
+
 hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 	
 	hash_t* hash = malloc(sizeof(hash_t));
@@ -52,8 +70,7 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
 
 }
 
-elemento_t * hash_obtener_elemento(const hash_t *hash, const char *clave) {
-	if(!hash) return NULL;
+elemento_t hash_obtener_elemento(const hash_t *hash, const char *clave) {
 	size_t posicion = hash_posicion(hash, clave);
 
 	for(size_t i = 0; i < hash->capacidad; i++) {
@@ -62,33 +79,34 @@ elemento_t * hash_obtener_elemento(const hash_t *hash, const char *clave) {
 
 		if(!hash->datos[nueva_posicion])
 			return NULL;
-		if(strcmp(hash->datos[nueva_posicion]->clave, clave) == 0)
+		if(strcmp(hash->datos[nueva_posicion].clave, clave) == 0)
 			return hash->datos[nueva_posicion];
 	}
 }
 
 void *hash_borrar(hash_t *hash, const char *clave) {
-	if(!hash) return NULL;
-	elemento_t * elemento = hash_obtener_elemento(hash, clave);
+	elemento_t elemento = hash_obtener_elemento(hash, clave);
 	if(!elemento) return NULL;
-	elemento->estado = BORRADO;
-	elemento->clave = NULL;
+	elemento.estado = BORRADO;
+	elemento.clave = NULL;
 	if(hash->funcion_destruir)
-		funcion_destruir(elemento->dato);
+		funcion_destruir(elemento.dato);
 	hash->cantidad--;
+
+	if((float) hash->cantidad / hash->capacidad <= FACTOR_CARGA)
+		hash_redimensionar(hash, capacidad->capacidad * FACTOR_CARGA_BORRADO);
+
+	free(elemento.clave);
 }
 
 void *hash_obtener(const hash_t *hash, const char *clave) {
-	if(!hash) return NULL;
-
-	elemento_t *elemento = hash_obtener_elemento(hash, clave);
+	elemento_t elemento = hash_obtener_elemento(hash, clave);
 
 	if(!elemento) return NULL; 
-	return elemento->dato;
+	return elemento.dato;
 }
 
 bool hash_pertenece(const hash_t *hash, const char *clave) {
-	if(!hash) return false;
 	return hash_obtener(hash, clave) != NULL;
 }
 
@@ -97,8 +115,6 @@ size_t hash_cantidad(const hash_t *hash) {
 }
 
 void hash_destruir(hash_t *hash) {
-	if(!hash) return;
-
 	for(size_t i = 0; i < hash->capacidad && hash->funcion_destruir; i++) {
 		if(hash->datos[i]->estado == OCUPADO) 
 			funcion_destruir(hash->datos[i].dato);
