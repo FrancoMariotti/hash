@@ -23,23 +23,23 @@ unsigned long hash(unsigned char *str) {
 	return hash;
 }
 
-hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
+hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 	
-	hash_t* hash=malloc(sizeof(hash_t));
+	hash_t* hash = malloc(sizeof(hash_t));
 	
 	if(!hash) return NULL;
 	
-	hash->funcion_destruir=destruir_dato;
+	hash->funcion_destruir = destruir_dato;
 	
-	hash->datos=malloc(sizeof(elemento_t)*TAM_INICIAL);
+	hash->datos = malloc(sizeof(elemento_t) * TAM_INICIAL);
 	
-	if(!hash->datos){
+	if(!hash->datos) {
 		free(hash);
 		return NULL;
 	}
 	
-	hash->capacidad=TAM_INICIAL;
-	hash->cantidad=0;
+	hash->capacidad = TAM_INICIAL;
+	hash->cantidad = 0;
 	
 	return hash;
 }
