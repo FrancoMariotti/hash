@@ -1,5 +1,12 @@
+<<<<<<< Updated upstream
 #define FACTOR_CARGA 0.5
 #define FACTOR_CARGA_BORRADO FACTOR_CARGA * 0.5
+=======
+#define TAM_INICIAL	100
+#define FACTOR_CARGA 0.5
+#define FACTOR_CARGA_BORRADO FACTOR_CARGA * 0.5
+
+>>>>>>> Stashed changes
 typedef enum estado { OCUPADO, VACIO, BORRADO } estado_t;
 
 typedef struct hash {
@@ -50,8 +57,12 @@ hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 }
 
 bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
-	if(hash_obtener_elemento(hash,clave)){
+	
+	elemento_t* elemento = hash_obtener_elemento(hash,clave);
+	
+	if(elemento){
 		hash->datos[posicion].clave = strdup(clave);
+		hash->funcion_destruir(dato);
 		hash->datos[posicion].dato = dato;
 	}
 	else{	
@@ -71,9 +82,8 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
 				hash->datos[posicion]=elemento;
 			}`
 		}
+		hash->cantidad++;
 	}
- 
-	hash->cantidad++;
 	
 	return true;
 }
