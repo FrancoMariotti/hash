@@ -14,14 +14,14 @@ typedef struct hash_iter hash_iter_t;
 // tipo de función para destruir dato
 typedef void (*hash_destruir_dato_t)(void *);
 
-/* Crea el hash Franco
+/* Crea el hash 
  */
 hash_t *hash_crear(hash_destruir_dato_t destruir_dato);
 
 /* Guarda un elemento en el hash, si la clave ya se encuentra en la
  * estructura, la reemplaza. De no poder guardarlo devuelve false.
  * Pre: La estructura hash fue inicializada
- * Post: Se almacenó el par (clave, dato) Franco
+ * Post: Se almacenó el par (clave, dato) 
  */
 bool hash_guardar(hash_t *hash, const char *clave, void *dato); 
 
@@ -35,7 +35,7 @@ void *hash_borrar(hash_t *hash, const char *clave);
 
 /* Obtiene el valor de un elemento del hash, si la clave no se encuentra
  * devuelve NULL.
- * Pre: La estructura hash fue inicializada Franco
+ * Pre: La estructura hash fue inicializada
  */
 void *hash_obtener(const hash_t *hash, const char *clave);
 
@@ -45,7 +45,7 @@ void *hash_obtener(const hash_t *hash, const char *clave);
 bool hash_pertenece(const hash_t *hash, const char *clave);
 
 /* Devuelve la cantidad de elementos del hash.
- * Pre: La estructura hash fue inicializada Franco
+ * Pre: La estructura hash fue inicializada
  */ 
 size_t hash_cantidad(const hash_t *hash);
 
@@ -58,13 +58,13 @@ void hash_destruir(hash_t *hash);
 
 /* Iterador del hash */
 
-// Crea iterador Franco
+// Crea iterador
 hash_iter_t *hash_iter_crear(const hash_t *hash);
 
-// Avanza iterador Franco
+// Avanza iterador
 bool hash_iter_avanzar(hash_iter_t *iter);
 
-// Devuelve clave actual, esa clave no se puede modificar ni liberar. Franco
+// Devuelve clave actual, esa clave no se puede modificar ni liberar.
 const char *hash_iter_ver_actual(const hash_iter_t *iter);
 
 // Comprueba si terminó la iteración
