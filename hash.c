@@ -88,7 +88,7 @@ elemento_t* hash_obtener_elemento(const hash_t *hash, const char *clave) {
 		if(!hash->datos[nueva_posicion])
 			return NULL;
 		if(strcmp(hash->datos[nueva_posicion].clave, clave) == 0)
-			return hash->datos[nueva_posicion];
+			return &hash->datos[nueva_posicion];
 	}
 }
 
@@ -98,6 +98,7 @@ void *hash_borrar(hash_t *hash, const char *clave) {
 	if(!elemento) return NULL;
 	elemento->estado = BORRADO;
 	elemento->clave = NULL;
+	void * dato = elemento->dato;
 	if(hash->funcion_destruir)
 		funcion_destruir(elemento->dato);
 	hash->cantidad--;
@@ -106,7 +107,7 @@ void *hash_borrar(hash_t *hash, const char *clave) {
 		hash_redimensionar(hash, capacidad->capacidad * FACTOR_CARGA_BORRADO);
 
 	free(elemento->clave);
-
+	return dato;
 }
 
 void *hash_obtener(const hash_t *hash, const char *clave) {
@@ -120,7 +121,7 @@ bool hash_pertenece(const hash_t *hash, const char *clave) {
 }
 
 size_t hash_cantidad(const hash_t *hash) {
-
+	return hash->cantidad;
 }
 
 void hash_destruir(hash_t *hash) {
