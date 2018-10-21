@@ -1,10 +1,5 @@
-typedef enum estado { OCUPADO, VACIO, BORRADO } estado_t;
-
-
 #define TAM_INICIAL	100
-
-typedef enum ESTADO{ OCUPADO, VACIO, BORRADO } ESTADO_T;
-
+typedef enum estado { OCUPADO, VACIO, BORRADO } estado_t;
 
 typedef struct hash {
 	size_t cantidad;
@@ -64,12 +59,15 @@ void *hash_obtener(const hash_t *hash, const char *clave) {
 
 bool hash_pertenece(const hash_t *hash, const char *clave) {
 	if(!hash) return false;
-	unsigned long posicion = hash(clave) % hash->capacidad;
+	size_t posicion = (size_t) hash(clave) % hash->capacidad;
 
-	for(int i = 0; i < hash->capacidad; i++) {
-		if(hash->datos[posicion + i]->estado == VACIO)
+	for(size_t i = 0; i < hash->capacidad; i++) {
+		
+		size_t nueva_posicion = (posicion + i) % hash->capacidad;
+
+		if(hash->datos[nueva_posicion]->estado == VACIO)
 			return false;
-		if(strcmp(hash->datos[posicion + i]->clave, clave) == 0)
+		if(strcmp(hash->datos[nueva_posicion]->clave, clave) == 0)
 			return true;
 	}
 }
