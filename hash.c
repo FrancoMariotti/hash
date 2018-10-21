@@ -1,9 +1,15 @@
 typedef enum estado { OCUPADO, VACIO, BORRADO } estado_t;
 
+
+#define TAM_INICIAL	100
+
+typedef enum ESTADO{ OCUPADO, VACIO, BORRADO } ESTADO_T;
+
+
 typedef struct hash {
 	size_t cantidad;
 	size_t capacidad;
-	elemento_t * datos;
+	elemento_t* datos;
 	hash_destruir_dato_t funcion_destruir;
 }hash_t;
 
@@ -22,8 +28,25 @@ unsigned long hash(unsigned char *str) {
 	return hash;
 }
 
-hash_t *hash_crear(hash_destruir_dato_t destruir_dato) {
-
+hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
+	
+	hash_t* hash=malloc(sizeof(hash_t));
+	
+	if(!hash) return NULL;
+	
+	hash->funcion_destruir=destruir_dato;
+	
+	hash->datos=malloc(sizeof(elemento_t)*TAM_INICIAL);
+	
+	if(!hash->datos){
+		free(hash);
+		return NULL;
+	}
+	
+	hash->capacidad=TAM_INICIAL;
+	hash->cantidad=0;
+	
+	return hash;
 }
 
 bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
@@ -37,6 +60,7 @@ void *hash_borrar(hash_t *hash, const char *clave) {
 void *hash_obtener(const hash_t *hash, const char *clave) {
 
 }
+
 
 bool hash_pertenece(const hash_t *hash, const char *clave) {
 	if(!hash) return false;
