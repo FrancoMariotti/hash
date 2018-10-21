@@ -77,6 +77,13 @@ void tabla_valores_iniciales(elemento_t* tabla, size_t capacidad);
  */
 bool hash_redimensionar(hash_t *hash, size_t nueva_capacidad);
 
+
+
+/* ******************************************************************
+ *                        PRIMITIVAS HASH
+ * *****************************************************************/
+
+
 hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 	
 	hash_t* hash = malloc(sizeof(hash_t));
@@ -171,6 +178,10 @@ void hash_destruir(hash_t *hash) {
 	free(hash);
 }
 
+/* ******************************************************************
+ *                        PRIMITIVAS ITERADOR HASH
+ * *****************************************************************/
+
 hash_iter_t *hash_iter_crear(const hash_t *hash) {
 	hash_iter_t * iter = malloc(sizeof(hash_iter_t));
 	if(!iter) return NULL;
@@ -207,6 +218,10 @@ bool hash_iter_al_final(const hash_iter_t *iter) {
 void hash_iter_destruir(hash_iter_t* iter) {
 	free(iter);	
 }
+
+/* ******************************************************************
+ *                        FUNCIONES EXTRA
+ * *****************************************************************/
 
 unsigned long hashing(const char *str) {
 	unsigned long hash = 5381;
