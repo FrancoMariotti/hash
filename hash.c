@@ -99,9 +99,12 @@ size_t hash_cantidad(const hash_t *hash) {
 }
 
 void hash_destruir(hash_t *hash) {
-	for(size_t i = 0; i < hash->capacidad && hash->funcion_destruir; i++) {
-		if(hash->datos[i]->estado == OCUPADO) 
+	for(size_t i = 0; i < hash->capacidad; i++) {
+		if(hash->datos[i]->estado != OCUPADO)
+			continue;
+		if(hash->funcion_destruir) 
 			funcion_destruir(hash->datos[i].dato);
+		free(hash->datos[i].clave);
 	}
 	free(hash->datos);
 	free(hash);
