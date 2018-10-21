@@ -401,17 +401,28 @@ static void prueba_hash_iterar_volumen(size_t largo)
 void pruebas_hash_catedra()
 {
     /* Ejecuta todas las pruebas unitarias. */
+    printf("1\n");
     prueba_crear_hash_vacio();
+    printf("2\n");
     prueba_iterar_hash_vacio();
+    printf("3\n");
     prueba_hash_insertar();
+    printf("4\n");
     prueba_hash_reemplazar();
+    printf("5\n");
     prueba_hash_reemplazar_con_destruir();
+    printf("6\n");
     prueba_hash_borrar();
+    printf("7\n");
     prueba_hash_clave_vacia();
+    printf("8\n");
     prueba_hash_valor_null();
-    prueba_hash_volumen(5000, true);
+    printf("9\n");
     prueba_hash_iterar();
+    printf("10\n");
     prueba_hash_iterar_volumen(5000);
+    printf("11\n");
+    prueba_hash_volumen(5000, true);
 }
 
 void pruebas_volumen_catedra(size_t largo)
