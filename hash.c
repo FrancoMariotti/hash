@@ -1,3 +1,4 @@
+#define TAM_INICIAL 101
 #define FACTOR_CARGA 0.5
 #define FACTOR_CARGA_BORRADO FACTOR_CARGA * 0.5
 typedef enum estado { OCUPADO, VACIO, BORRADO } estado_t;
