@@ -1,12 +1,7 @@
-<<<<<<< Updated upstream
-#define FACTOR_CARGA 0.5
-#define FACTOR_CARGA_BORRADO FACTOR_CARGA * 0.5
-=======
-#define TAM_INICIAL	100
+#define TAM_INICIAL 101
 #define FACTOR_CARGA 0.5
 #define FACTOR_CARGA_BORRADO FACTOR_CARGA * 0.5
 
->>>>>>> Stashed changes
 typedef enum estado { OCUPADO, VACIO, BORRADO } estado_t;
 
 typedef struct hash {
@@ -80,7 +75,7 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
 				elemento->estado = OCUPADO;
 
 				hash->datos[posicion]=elemento;
-			}`
+			}
 		}
 		hash->cantidad++;
 	}
