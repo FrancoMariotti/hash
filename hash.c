@@ -23,6 +23,10 @@ unsigned long hash(unsigned char *str) {
 	return hash;
 }
 
+size_t hash_posicion(const hash_t *hash, const char *clave) {
+	return (size_t) hash(clave) % hash->capacidad;
+}
+
 hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
 	
 	hash_t* hash = malloc(sizeof(hash_t));
@@ -48,30 +52,38 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
 
 }
 
-void *hash_borrar(hash_t *hash, const char *clave) {
-
-}
-
-void *hash_obtener(const hash_t *hash, const char *clave) {
-
-}
-size_t hash_posicion(const hash_t *hash, const char *clave) {
-	return (size_t) hash(clave) % hash->capacidad;
-}
-
-bool hash_pertenece(const hash_t *hash, const char *clave) {
-	if(!hash) return false;
+elemento_t * hash_obtener_elemento(const hash_t *hash, const char *clave) {
+	if(!hash) return NULL;
 	size_t posicion = hash_posicion(hash, clave);
 
 	for(size_t i = 0; i < hash->capacidad; i++) {
 		
 		size_t nueva_posicion = (posicion + i) % hash->capacidad;
 
-		if(hash->datos[nueva_posicion]->estado == VACIO)
-			return false;
+		if(!hash->datos[nueva_posicion])
+			return NULL;
 		if(strcmp(hash->datos[nueva_posicion]->clave, clave) == 0)
-			return true;
+			return hash->datos[nueva_posicion];
 	}
+}
+
+void *hash_borrar(hash_t *hash, const char *clave) {
+	if(!hash || !hash_pertenece(hash, clave)) return NULL;
+	size_t posicion = hash_posicion(hash, clave);
+}
+
+void *hash_obtener(const hash_t *hash, const char *clave) {
+	if(!hash) return NULL;
+
+	elemento_t *elemento = hash_obtener_elemento(hash, clave);
+
+	if(!elemento) return NULL; 
+	return elemento->dato;
+}
+
+bool hash_pertenece(const hash_t *hash, const char *clave) {
+	if(!hash) return false;
+	return hash_obtener(hash, clave) != NULL;
 }
 
 size_t hash_cantidad(const hash_t *hash) {
