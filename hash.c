@@ -81,11 +81,11 @@ bool hash_redimensionar(hash_t *hash, size_t nueva_capacidad){
 		}
 	}
 	
-	hash->tabla=nueva_tabla;
+	hash->tabla = nueva_tabla;
 	
 	free(vieja_tabla);
 	
-	hash->cantidad=hash->cantidad-hash->borrados;
+	hash->cantidad = hash->cantidad-hash->borrados;
 	hash->capacidad = nueva_capacidad;
 	
 	return true;
