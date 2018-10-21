@@ -67,7 +67,27 @@ void hash_valores_iniciales(hash_t * hash) {
 
 bool hash_redimensionar(hash_t *hash, size_t nueva_capacidad){
 	
+	elemento_t* vieja_tabla = hash->tabla;
 	
+	elemento_t* nueva_tabla = malloc(sizeof(elemento_t)*nueva_capacidad);
+	
+	if(!nueva_tabla)return false;
+	
+	for(size_t i = 0; i < hash->capacidad; i++) {
+		size_t posicion = i  % hash->capacidad;
+		
+		if(vieja_tabla[posicion].estado == OCUPADO)
+			nueva_tabla[posicion] = vieja_tabla[posicion];
+	}
+	
+	hash->tabla=nueva_tabla;
+	
+	free(vieja_tabla);
+	
+	hash->cantidad=hash->cantidad-hash->borrados;
+	hash->capacidad = nueva_capacidad;
+	
+	return true;
 }
 
 hash_t * hash_crear(hash_destruir_dato_t destruir_dato) {
