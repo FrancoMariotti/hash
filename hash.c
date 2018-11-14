@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define TAM_INICIAL 100001
+#define TAM_INICIAL 101
 #define FACTOR_CARGA 0.5
 
 typedef enum estado { OCUPADO, VACIO, BORRADO } estado_t;
@@ -117,7 +117,7 @@ hash_t *hash_crear(hash_destruir_dato_t destruir_dato) {
 
 bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
 
-  if ((hash->cantidad / hash->capacidad) >= FACTOR_CARGA)
+  if (((float)hash->cantidad / (float)hash->capacidad) >= FACTOR_CARGA)
     if (!hash_redimensionar(hash, hash->capacidad * 2))
       return false;
 
@@ -125,8 +125,10 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
   size_t posicion = hash_posicion(hash->capacidad, clave);
 
   if (elemento) {
-    if (hash->funcion_destruir)
+    if (hash->funcion_destruir && hash->tabla[posicion].dato) {
       hash->funcion_destruir(hash->tabla[posicion].dato);
+      hash->tabla[posicion].dato = NULL;
+    }
     hash->tabla[posicion].dato = dato;
     return true;
   }
@@ -145,18 +147,13 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato) {
 void *hash_borrar(hash_t *hash, const char *clave) {
 
   elemento_t *elemento = hash_obtener_elemento(hash, clave);
-
   if (!elemento)
     return NULL;
-
   elemento->estado = BORRADO;
-  void *dato = elemento->dato;
-  if (hash->funcion_destruir)
-    hash->funcion_destruir(elemento->dato);
   free(elemento->clave);
   elemento->clave = NULL;
   hash->borrados++;
-  return dato;
+  return elemento->dato;
 }
 
 void *hash_obtener(const hash_t *hash, const char *clave) {
@@ -176,7 +173,7 @@ size_t hash_cantidad(const hash_t *hash) {
 
 void hash_destruir(hash_t *hash) {
   for (size_t i = 0; i < hash->capacidad; i++) {
-    if (hash->tabla[i].estado == VACIO)
+    if (hash->tabla[i].estado != OCUPADO)
       continue;
     if (hash->funcion_destruir)
       hash->funcion_destruir(hash->tabla[i].dato);
@@ -272,10 +269,10 @@ bool hash_redimensionar(hash_t *hash, size_t nueva_capacidad) {
     return false;
   elemento_t *vieja_tabla = hash->tabla;
 
-  size_t capacidad_vieja = hash->cantidad;
-  hash->cantidad = hash->cantidad - hash->borrados;
+  size_t capacidad_vieja = hash->capacidad;
   hash->capacidad = nueva_capacidad;
   hash->tabla = nueva_tabla;
+  hash->cantidad = 0;
   hash->borrados = 0;
   pasar_tabla(hash, vieja_tabla, capacidad_vieja);
   free(vieja_tabla);
@@ -289,8 +286,6 @@ void pasar_tabla(hash_t *hash, elemento_t *vieja_tabla,
     if (vieja_tabla[i].estado != OCUPADO)
       continue;
     hash_guardar(hash, vieja_tabla[i].clave, vieja_tabla[i].dato);
-    if (hash->funcion_destruir)
-      hash->funcion_destruir(vieja_tabla[i].dato);
     free(vieja_tabla[i].clave);
   }
 }
